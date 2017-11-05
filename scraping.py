@@ -1,45 +1,56 @@
 from bs4 import BeautifulSoup
 import requests
 import time
-import shutil
+from smtplib import SMTP
+from email.mime.text import MIMEText
 import os
-import smtplib
 
 def scraping():
     url = 'www.animeflv.net'
     response = requests.get("https://" + url)
     soup = BeautifulSoup(response.content, 'html.parser')
     anime = soup.find_all('div', {'class':'AnimeDia'})
-    title = anime[0].find('span', {'class': 'Title'}).string#find('strong')
+    title = anime[0].find('span', {'class': 'Title'}).string
     image_url = 'https://' + url + anime[0].find('img')['src']
-    image_name = image_url.split("/")[len(image_url.split("/"))-1]
-    with open(image_name, 'wb') as f:
-        r = requests.get(image_url, stream=True)
-        shutil.copyfileobj(r.raw, f)
     synopsis = anime[0].find('div', {'class': 'Synopsis',}).find('div', {'class': 'Description'}).string
-    return title, image_url, image_name, synopsis
+    return title, image_url, synopsis
+
+def send_mail(mensaje):#https://support.google.com/mail/?p=BadCredentials
+    REMITENTE = "Yo <andresfelipe.2031@gmail.com>" 
+    DESTINATARIO = "andresfelipe.2031@gmail.com" 
+    ASUNTO = "Anime del día"
+
+    mime_message = MIMEText(mensaje, 'html')
+    mime_message["From"] = REMITENTE
+    mime_message["To"] = DESTINATARIO
+    mime_message["Subject"] = ASUNTO
+    # Datos
+    username = 'andresfelipe.2031@gmail.com'
+    password = os.environ['SECRET_EMAIL_KEY']
+    
+    # Enviando el correo
+    server = SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.ehlo()
+    server.login(username,password)
+    server.sendmail(REMITENTE, DESTINATARIO, mime_message.as_string())
+    server.quit()
 
 def main(seconds):
-    REMITENTE = "<andresfelipe.2031@gmail.com>" 
-    DESTINATARIO = "<andresfelipe.2031@gmail.com>" 
-    ASUNTO = "Anime del día"
+    
     MENSAJE_BASE = """
         <h1>El anime del dia es: <strong> %s </strong> </h1>
         <figure>
             <img src="%s" alt="%s">
         </figure>
-        <span>sinopis: </span>
+        <h3>Sinopis: </h3>
         <p> %s </p>
         """
-    BASE_DIR = os.path.dirname(__file__)
-    # smtp = smtplib.SMTP('localhost')
-    # smtp.sendmail(REMITENTE, DESTINATARIO, mensaje)
     while True:
-        title, image_url, image_name, synopsis = scraping()
+        title, image_url, synopsis = scraping()
         mensaje = MENSAJE_BASE%(title, image_url, title, synopsis)
-        print(mensaje)
+        send_mail(mensaje)
         time.sleep(seconds)
-
 
 if __name__ == '__main__':
     h = 24
