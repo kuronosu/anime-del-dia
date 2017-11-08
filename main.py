@@ -7,15 +7,15 @@ def keep_track(anime, tipo):
     fecha = datetime.now()
     if tipo == 1:
         tipo = 'Web Scraping'
-        archivo = 'lectura.txt'
+        archivo = 'lectura.dat'
     elif tipo == 2:
         tipo = 'enviado'
-        archivo = 'envio.txt'
+        archivo = 'envio.dat'
     else:
         tipo = 'error'
-        archivo = 'errores.txt'
+        archivo = 'errores.dat'
     with open(archivo, 'a') as f:
-        texto = 'Anime: {}, url: {}, {}: {} \n'.format(anime.name, anime.url, tipo, fecha)
+        texto = 'Anime: {},\t\t url: {},\t\t {}: {} \n'.format(anime.name, anime.url, tipo, fecha)
         f.write(texto)
 
 def different_anime(anime):
