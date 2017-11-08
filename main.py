@@ -28,15 +28,16 @@ def different_anime(anime):
 
 
 def main(mensaje_base, remitente, destinatario, asunto):
-    anime = core.Anime()
+    anime, send = different_anime(core.Anime())
+    send = True
     while True:
-        anime, send = different_anime(anime)
         if send:
             mensaje = mensaje_base%(anime.url, anime.name, anime.image_url, anime.name, anime.synopsis)
             mail = core.Mail(mensaje, remitente, destinatario, asunto)
             mail.send_mail()
             keep_track(anime, 2)
         time.sleep(settings.WAIT)
+        anime, send = different_anime(anime)
 
 
 if __name__ == '__main__':

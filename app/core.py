@@ -44,6 +44,6 @@ class Mail():
         server.starttls()
         server.ehlo()
         server.login(username,password)
-        server.sendmail(REMITENTE, DESTINATARIO, mime_message.as_string())
+        server.sendmail(self.remitente, self.destinatario, mime_message.as_string())
         server.quit()
 
