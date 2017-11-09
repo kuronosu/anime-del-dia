@@ -5,17 +5,18 @@ from datetime import datetime
 
 def keep_track(anime, tipo):
     fecha = datetime.now()
-    if tipo == 1:
-        tipo = 'Web Scraping'
-        archivo = 'lectura.dat'
-    elif tipo == 2:
-        tipo = 'enviado'
-        archivo = 'envio.dat'
-    else:
-        tipo = 'error'
-        archivo = 'errores.dat'
-    with open(archivo, 'a') as f:
-        texto = 'Anime: {},\t\t url: {},\t\t {}: {} \n'.format(anime.name, anime.url, tipo, fecha)
+    if tipo == 1: # Web Scraping
+        archivo = 'lectura'
+    elif tipo == 2: # enviado
+        archivo = 'envio'
+    else: # error
+        tipo = 3
+        archivo = 'errores'
+    with open(archivo + '.csv', 'a') as f:
+        texto = '{},{},{},{} \n'.format(tipo, anime.id, fecha, anime.url)
+        f.write(texto)
+    with open(archivo + '.dat', 'a') as f:
+        texto = '{} \t\t\t {} \t\t\t {} \t\t\t {} \n'.format(tipo, anime.id, fecha, anime.url)
         f.write(texto)
 
 def different_anime(anime):
