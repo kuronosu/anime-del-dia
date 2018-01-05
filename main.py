@@ -19,28 +19,33 @@ def keep_track(anime, tipo):
         texto = '{} \t\t\t {} \t\t\t {} \t\t\t {} \n'.format(tipo, anime.id, fecha, anime.url)
         f.write(texto)
 
-def different_anime(anime):
-    anime_2 = core.Anime()
-    keep_track(anime_2, 1)
-    if not (anime.id == anime_2.id):
-        return anime_2, True
+def different_anime(anime, tipo=1):
+    if tipo != 3:
+        anime_2 = core.Anime()
+        keep_track(anime_2, tipo)
+        if not (anime.id == anime_2.id):
+            return anime_2, True
+        else:
+            return anime, False
     else:
-        return anime, False
-
+        keep_track(anime, tipo)
 
 def main(mensaje_base, remitente, destinatario, asunto):
     anime, send = different_anime(core.Anime())
     send = True
     while True:
-        if send:
-            mensaje = mensaje_base%(anime.url, anime.name, anime.image_url, anime.name, anime.synopsis)
-            mail = core.Mail(mensaje, remitente, destinatario, asunto)
-            mail.send_mail()
-            keep_track(anime, 2)
-        time.sleep(settings.WAIT)
-        anime, send = different_anime(anime)
+        try:
+            if send:
+                mensaje = mensaje_base%(anime.url, anime.name, anime.image_url, anime.name, anime.synopsis)
+                mail = core.Mail(mensaje, remitente, destinatario, asunto)
+                mail.send_mail()
+                keep_track(anime, 2)
+            time.sleep(settings.WAIT)
+            anime, send = different_anime(anime)
+        except:
+            anime, send = different_anime(anime, error=3)
 
 
 if __name__ == '__main__':
     main(settings.MENSAJE_BASE, settings.REMITENTE, settings.DESTINATARIO, settings.ASUNTO)
-    
+
