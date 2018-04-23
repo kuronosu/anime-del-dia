@@ -35,6 +35,13 @@ def main(mensaje_base, remitente, destinatario, asunto):
     send = True
     while True:
         try:
+            anime_trys = 0
+            while not (anime.id or anime.image_url or anime.name or anime.synopsis or anime.url):
+                anime_trys += 1
+                if anime_trys >= 3:
+                    break
+                anime = core.Anime()
+                time.sleep(60)
             if send:
                 mensaje = mensaje_base%(anime.url, anime.name, anime.image_url, anime.name, anime.synopsis)
                 mail = core.Mail(mensaje, remitente, destinatario, asunto)
@@ -43,7 +50,7 @@ def main(mensaje_base, remitente, destinatario, asunto):
             time.sleep(settings.WAIT)
             anime, send = different_anime(anime)
         except:
-            anime, send = different_anime(anime, error=3)
+            anime, send = different_anime(anime, 3)
 
 
 if __name__ == '__main__':
