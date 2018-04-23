@@ -36,7 +36,7 @@ def main(mensaje_base, remitente, destinatario, asunto):
     while True:
         try:
             anime_trys = 0
-            while not (anime.id or anime.image_url or anime.name or anime.synopsis or anime.url):
+            while not (anime.id and anime.image_url and anime.name and anime.synopsis and anime.url):
                 anime_trys += 1
                 if anime_trys >= 3:
                     break
